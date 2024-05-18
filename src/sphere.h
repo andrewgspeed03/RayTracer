@@ -7,7 +7,9 @@ class sphere: public hittable {
     public:
         sphere() {}
         sphere(vec3 cen, float r) : center(cen), radius(r) {};
+        
         virtual bool hit(const ray& r, float tMin, float tMax, hitRecord& rec) const;
+        
         vec3 center;
         float radius;
 };
