@@ -36,7 +36,7 @@ int main() {
             float v = float(y) / float(ny);
 
             ray r(origin, lowerLeftCorner + u * horizontal + v * vertical);
-            vec3 col = color(r);
+            vec3 col = color(r, world);
 
             int ir = int(255.99 * col[0]);
             int ig = int(255.99 * col[1]);
