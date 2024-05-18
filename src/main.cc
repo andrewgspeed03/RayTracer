@@ -50,7 +50,7 @@ int main() {
 
     hittable *world = new hittableList(list, 2);
 
-    camera cam(90, float(nx) / float(ny));
+    camera cam(vec3(-2, 2, 1), vec3(0, 0, 1), vec3(0, 1, 0), 90, float(nx) / float(ny));
     for (int y = ny-1; y >= 0; y--){
         for (int x = 0; x < nx; x++){
             vec3 col(0, 0, 0);
