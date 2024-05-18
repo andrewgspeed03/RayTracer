@@ -41,7 +41,7 @@ int main() {
     camera cam;
     for (int y = ny-1; y >= 0; y--){
         for (int x = 0; x < nx; x++){
-            vec3 col(0, 0, 0)
+            vec3 col(0, 0, 0);
             for (int s = 0; s < ns; s ++){
                 float u = float(x + drand48()) / float(nx);
                 float v = float(y + drand48()) / float(ny);
@@ -50,6 +50,8 @@ int main() {
                 col += color(r, world);
             }
             col /= float(ns);
+            col = vec3(sqrt(col[0]), sqrt(col[1]), sqrt(col[2]))
+
             int ir = int(255.99 * col[0]);
             int ig = int(255.99 * col[1]);
             int ib = int(255.99 * col[2]);
