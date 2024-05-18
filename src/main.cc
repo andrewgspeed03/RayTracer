@@ -40,6 +40,8 @@ int main() {
 
     std::cout << "P3\n" << nx << " " << ny << "\n255\n";
 
+    float R = cos(M_PI / 4);
+
     hittable *list[4];
     list[0] = new sphere(vec3(0, 0, -1), 0.5, new lambertian(vec3(0.8, 0.3, 0.3)));
     list[1] = new sphere(vec3(0, -100.5, -1), 100, new lambertian(vec3(0.8, 0.8, 0.0)));
@@ -48,7 +50,7 @@ int main() {
 
     hittable *world = new hittableList(list, 2);
 
-    camera cam;
+    camera cam(90, float(nx) / float(ny));
     for (int y = ny-1; y >= 0; y--){
         for (int x = 0; x < nx; x++){
             vec3 col(0, 0, 0);
