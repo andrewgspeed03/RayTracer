@@ -3,15 +3,17 @@
 
 #include "hittable.h"
 
+
 class sphere: public hittable {
     public:
         sphere() {}
-        sphere(vec3 cen, float r) : center(cen), radius(r) {};
+        sphere(vec3 cen, float r, material& m) : center(cen), radius(r), material(m){};
         
         virtual bool hit(const ray& r, float tMin, float tMax, hitRecord& rec) const;
         
         vec3 center;
         float radius;
+        material mat;
 };
 
 bool sphere::hit(const ray& r, float tMin, float tMax, hitRecord& rec) const {

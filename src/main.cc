@@ -4,6 +4,7 @@
 #include "hittableList.h"
 #include "float.h"
 #include "camera.h"
+#include "material.h"
 
 vec3 randomInUnitSphere() {
     vec3 p;
@@ -13,11 +14,17 @@ vec3 randomInUnitSphere() {
     return p;
 }
 
-vec3 color(const ray& r, hittable *world){
+vec3 color(const ray& r, hittable *world, int depth){
     hitRecord rec;
     if (world -> hit(r, 0.001, MAXFLOAT, rec)){
-        vec3 target = rec.p + rec.normal + randomInUnitSphere();
-        return 0.5 * color( ray(rec.p, targer - rec.p), world);
+        ray scattered;
+        vec3 attenuation;
+        if (depth < 50 && tec.matPtr -> scatter(r, rec, attenuation, scattered)) {
+            return attenuation * color(scattered, world, depth + 1);
+        }
+        else[
+            return vec3(0, 0, 0);
+        ]
     }
     else{
         vec3 unitDirection = unitVector(r.direction());
@@ -33,9 +40,12 @@ int main() {
 
     std::cout << "P3\n" << nx << " " << ny << "\n255\n";
 
-    hittable *list[2];
-    list[0] = new sphere(vec3(0, 0, -1), 0.5);
-    list[1] = new sphere(vec3(0, -100.5, -1), 100);
+    hittable *list[4];
+    list[0] = new sphere(vec3(0, 0, -1), 0.5, new lambertian(vec3(0.8, 0.3, 0.3)));
+    list[1] = new sphere(vec3(0, -100.5, -1), 100, new lambertian(vec3(0.8, 0.8, 0.0)));
+    list[2] = new sphere(vec3(1, 0, -1), 0.5, new metal(vec3(0.8, 0.6, 0.2)));
+    list[3] = new sphere(vec3(-1, 0, -1), 0.5, new metal(vec3(0.8, 0.8, 0.8)));
+
     hittable *world = new hittableList(list, 2);
 
     camera cam;
