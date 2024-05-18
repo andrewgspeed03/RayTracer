@@ -15,7 +15,7 @@ vec3 randomInUnitSphere() {
 
 vec3 color(const ray& r, hittable *world){
     hitRecord rec;
-    if (world -> hit(r, 0.0, MAXFLOAT, rec)){
+    if (world -> hit(r, 0.001, MAXFLOAT, rec)){
         vec3 target = rec.p + rec.normal + randomInUnitSphere();
         return 0.5 * color( ray(rec.p, targer - rec.p), world);
     }
