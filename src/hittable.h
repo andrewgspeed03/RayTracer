@@ -7,11 +7,13 @@ class material;
 
 struct hitRecord {
     float t;
-    vec3 p;
+    point3 p;
     vec3 normal;
 };
 class hittable{
     public:
+        virtual ~hittable() = default;
+
         virtual bool hit(const ray& r, float tMin, float tMax, hitRecord& rec) const = 0;
 };
 
