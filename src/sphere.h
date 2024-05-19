@@ -7,9 +7,9 @@
 class sphere: public hittable {
     public:
         sphere() {}
-        sphere(const point3& cen, float r, material& m) : center(cen), radius(fmax(0, r)), material(m){};
+        sphere(const point3& cen, float r, shared_ptr<material> m) : center(cen), radius(fmax(0, r)), material(m){};
         
-        virtual bool hit(const ray& r, float tMin, float tMax, hitRecord& rec) const override{
+        virtual bool hit(const ray& r, interval rayT, hitRecord& rec) const override{
             vec3 oc = r.origin() - center;
             auto a = dot(r.direction(), r.direction());
             auto h = dot(oc, r.direction());
@@ -24,15 +24,17 @@ class sphere: public hittable {
 
             //find nearest root within range
             auto root = (h - sqrtd) / a;
-            if (root <= tMin || root >= tMax){
+            if (!rayT.surrounds(root)){
                 root = (h + sqrtd) / a;
-                if (root <= tMin || root >= tMax)
+                if (!rayT.surrounds(root))
                     return false;
             }
 
             rec.t = root;
             rec.p = r.at(rec.t);
-            rec.normal = (rec.p - center) / radius;
+            vec3 outwardNormal = (rec.p - center) / radius;
+            rec.setFaceNormal(r, outwardNormal);
+            rec.mat = mat;
 
             return true;
         }
