@@ -13,7 +13,7 @@ class camera {
         int samplesPerPixel = 10;
         int maxDepth = 10;
 
-        float vfoc = 90;
+        float vFov = 90;
         point3 lookFrom = point3(0, 0, 0);
         point3 lookAt = point3(0, 0, -1);
         vec3 vUp = vec3(0, 1, 0);
@@ -62,7 +62,7 @@ class camera {
             center = lookFrom;
 
             //determine viewport dimensions
-            auto theta = degreesToRadians(vfov);
+            auto theta = degreesToRadians(vFov);
             auto h = tan(theta / 2);
             auto viewportHeight = 2 * h * focusDist;
             auto viewportWidth = viewportHeight * (float(imageWidth) / imageHeight);
