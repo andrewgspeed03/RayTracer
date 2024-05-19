@@ -1,7 +1,10 @@
 #ifndef CAMERAH
 #define CAMERAH
 
-#include "ray.h"
+#include "constnutil.h"
+
+#include "hittable.h"
+#include "material.h"
 
 vec3 randomInUnitDisk() {
     vec3 p;

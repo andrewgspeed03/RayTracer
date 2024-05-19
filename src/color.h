@@ -1,9 +1,9 @@
 #ifndef COLORH
 #define COLORH
 
-#include "vec3.h"
 
-#include <iostream>
+#include "interval.h"
+#include "vec3.h"
 
 using color = vec3
 

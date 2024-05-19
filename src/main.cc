@@ -1,11 +1,6 @@
-#include <iostream>
-#include <cstdlib>
-
-#include "color.h"
+#include "constnutil.h"
 #include "sphere.h"
 #include "hittableList.h"
-#include "float.h"
-#include "camera.h"
 #include "material.h"
 
 vec3 randomInUnitSphere() {

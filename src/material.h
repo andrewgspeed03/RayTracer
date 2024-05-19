@@ -1,6 +1,8 @@
 #ifndef MATERIALH
 #define MATERIALH
 
+#include "constnutil.h"
+
 class hitRecord;
 
 class material {
