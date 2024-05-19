@@ -2,6 +2,7 @@
 #define HITTABLELISTH
 
 #include "hittable.h"
+#include "constnutil.h"
 
 #include <vector>
 
