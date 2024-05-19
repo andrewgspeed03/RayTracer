@@ -7,38 +7,40 @@
 class sphere: public hittable {
     public:
         sphere() {}
-        sphere(vec3 cen, float r, material& m) : center(cen), radius(r), material(m){};
+        sphere(const point3& cen, float r, material& m) : center(cen), radius(fmax(0, r)), material(m){};
         
-        virtual bool hit(const ray& r, float tMin, float tMax, hitRecord& rec) const;
-        
-        vec3 center;
+        virtual bool hit(const ray& r, float tMin, float tMax, hitRecord& rec) const override{
+            vec3 oc = r.origin() - center;
+            auto a = dot(r.direction(), r.direction());
+            auto h = dot(oc, r.direction());
+            auto c = oc.lengthSquared() - radius * radius;
+            
+            auto discriminant = h * h - a * c;
+
+            if (discriminant < 0)
+                return false;
+            
+            auto sqrtd = sqrt(discriminant);
+
+            //find nearest root within range
+            auto root = (h - sqrtd) / a;
+            if (root <= tMin || root >= tMax){
+                root = (h + sqrtd) / a;
+                if (root <= tMin || root >= tMax)
+                    return false;
+            }
+
+            rec.t = root;
+            rec.p = r.at(rec.t);
+            rec.normal = (rec.p - center) / radius;
+
+            return true;
+        }
+
+    private:
+        point3 center;
         float radius;
         material mat;
 };
-
-bool sphere::hit(const ray& r, float tMin, float tMax, hitRecord& rec) const {
-    vec3 oc = r.origin() - center;
-    float a = dot(r.direction(), r.direction());
-    float b = 2.0 * dot(oc, r.direction());
-    float c = dot(oc, oc) - radius * radius;
-    float discriminant = b * b - 4 * a * c;
-    if (discriminant > 0){
-        float temp = (-b - sqrt(b * b - a * c) )/ a;
-        if (temp < tMax && temp > tMin) {
-            rec.t = temp;
-            rec.p = r.pointAtParameter(rec.t);
-            rec.normal = (rec.p - center) / radius;
-            return true;
-        }
-        temp = (-b + sqrt(b * b - a * c)) / a;
-        if (temp < tMax && temp > tMin){
-            rec.t = temp;
-            rec.p = r.pointAtParameter(rec.t);
-            rec.normal = (rec.p - center) / radius;
-            return true;
-        }
-    }
-    return false;
-}    
-       
+      
 #endif
