@@ -14,25 +14,6 @@ vec3 randomInUnitSphere() {
     return p;
 }
 
-vec3 color(const ray& r, hittable *world, int depth){
-    hitRecord rec;
-    if (world -> hit(r, 0.001, MAXFLOAT, rec)){
-        ray scattered;
-        vec3 attenuation;
-        if (depth < 50 && tec.matPtr -> scatter(r, rec, attenuation, scattered)) {
-            return attenuation * color(scattered, world, depth + 1);
-        }
-        else[
-            return vec3(0, 0, 0);
-        ]
-    }
-    else{
-        vec3 unitDirection = unitVector(r.direction());
-        float t = 0.5 * (unitDirection.y() + 1.0);
-        return (1.0 - t) * vec3(1.0, 1.0, 1.0) + t * vec3(0.5, 0.7, 1.0);
-    }
-}
-
 int main() {
 
     //Image Properties
