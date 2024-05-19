@@ -35,14 +35,23 @@ int main() {
     list[3] = new sphere(vec3(-1, 0, -1), 0.5, new dielectric(1.5));
 
     hittable *world = new hittableList(list, 2);
+    
+    camera cam;
+    
+    cam.aspectRatio = 16.0 / 9.0;
+    cam.imageWidth = 1200;
+    cam.samplesPerPixel = 10;
+    cam.maxDepth = 20;
 
-    vec3 lookFrom(3, 3, 2);
-    vec3 lookAt(0, 0, -1);
-    float distToFloat = (lookFrom - lookAt).length();
-    float aperature = 2.0;
-    
-    camera cam(lookFrom, lookAt, vec3(0, 0, 1), 20, float(imageWidth) / float(imageHeight), aperture, distToFocus);
-    
+    cam.vfov = 20;
+    cam.lookFrom = point3(13, 2, 3);
+    cam.lookAt = point3(0, 0, 0);
+    cam.vUp = vec3(0, 1, 0);
+
+    cam.defocusAngle = 0.6;
+    cam.focusAngle = 10.0
+
+    cam.render(world);
 
     //renderer
 
