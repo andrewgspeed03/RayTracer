@@ -1,5 +1,7 @@
 #include <iostream>
 #include <cstdlib>
+
+#include "color.h"
 #include "sphere.h"
 #include "hittableList.h"
 #include "float.h"
@@ -61,11 +63,8 @@ int main() {
             col /= float(ns);
             col = vec3(sqrt(col[0]), sqrt(col[1]), sqrt(col[2]))
 
-            int ir = int(255.99 * col[0]);
-            int ig = int(255.99 * col[1]);
-            int ib = int(255.99 * col[2]);
-
-            std::cout << ir << " " << ig << " " << ib << "\n";
+            auto pixelColor = color(float(x) / (imageWidth - 1), float(y) / ( imageHeight - 1), 0);
+            writeColor(std::cout, pixelColor);
         }
     }
 
