@@ -42,7 +42,7 @@ class sphere: public hittable {
     private:
         point3 center;
         float radius;
-        material mat;
+        shared_ptr<material> mat;
 };
       
 #endif
