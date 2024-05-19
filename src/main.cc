@@ -34,11 +34,14 @@ vec3 color(const ray& r, hittable *world, int depth){
 }
 
 int main() {
-    int nx = 200;
-    int ny = 100;
+
+    //Image Properties
+
+    int imageWidth = 256;
+    int imageHeight = 256;
     int ns = 100;
 
-    std::cout << "P3\n" << nx << " " << ny << "\n255\n";
+    std::cout << "P3\n" << imageWidth << " " << imageHeight << "\n255\n";
 
     float R = cos(M_PI / 4);
 
@@ -55,14 +58,21 @@ int main() {
     float distToFloat = (lookFrom - lookAt).length();
     float aperature = 2.0;
     
-    camera cam(lookFrom, lookAt, vec3(0, 0, 1), 20, float(nx) / float(ny), aperture, distToFocus);
+    camera cam(lookFrom, lookAt, vec3(0, 0, 1), 20, float(imageWidth) / float(imageHeight), aperture, distToFocus);
     
-    for (int y = ny-1; y >= 0; y--){
-        for (int x = 0; x < nx; x++){
+
+    //renderer
+
+    for (int y = imageHeight-1; y >= 0; y--){
+
+        //progress bar
+        std::clog << "\rScanlines remaining: " << (imageHeight - y) << " " << std::flush;
+
+        for (int x = 0; x < imageWidth; x++){
             vec3 col(0, 0, 0);
             for (int s = 0; s < ns; s ++){
-                float u = float(x + drand48()) / float(nx);
-                float v = float(y + drand48()) / float(ny);
+                float u = float(x + drand48()) / float(imageWidth);
+                float v = float(y + drand48()) / float(imageHeight);
                 ray r = cam.getRay(u, v);
                 vec3 p = r.pointAtParameter(2.0);
                 col += color(r, world);
@@ -77,4 +87,6 @@ int main() {
             std::cout << ir << " " << ig << " " << ib << "\n";
         }
     }
+
+    std::clog << "\rDone.                \n";
 }
