@@ -19,7 +19,7 @@ int main() {
     int imageHeight = 256;
     int ns = 100;
 
-    std::cout << "P3\n" << imageWidth << " " << imageHeight << "\n255\n";
+    
 
     float R = cos(M_PI / 4);
 
@@ -48,29 +48,4 @@ int main() {
 
     cam.render(world);
 
-    //renderer
-
-    for (int y = imageHeight-1; y >= 0; y--){
-
-        //progress bar
-        std::clog << "\rScanlines remaining: " << (imageHeight - y) << " " << std::flush;
-
-        for (int x = 0; x < imageWidth; x++){
-            vec3 col(0, 0, 0);
-            for (int s = 0; s < ns; s ++){
-                float u = float(x + drand48()) / float(imageWidth);
-                float v = float(y + drand48()) / float(imageHeight);
-                ray r = cam.getRay(u, v);
-                vec3 p = r.pointAtParameter(2.0);
-                col += color(r, world);
-            }
-            col /= float(ns);
-            col = vec3(sqrt(col[0]), sqrt(col[1]), sqrt(col[2]))
-
-            auto pixelColor = color(float(x) / (imageWidth - 1), float(y) / ( imageHeight - 1), 0);
-            writeColor(std::cout, pixelColor);
-        }
-    }
-
-    std::clog << "\rDone.                \n";
 }
