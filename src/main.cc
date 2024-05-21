@@ -1,36 +1,53 @@
 #include "constnutil.h"
+
+#include "camera.h"
+#include "hittable.h"
 #include "sphere.h"
 #include "hittableList.h"
 #include "material.h"
 
-vec3 randomInUnitSphere() {
-    vec3 p;
-    do 
-        p = 2.0 * vec3(drand48(), drand48(), drand48()) - vec3(1, 1, 1);
-    while (p.squaredLength() >= 1.0);
-    return p;
-}
-
 int main() {
+    hittableList world;
 
-    //Image Properties
+    auto groundMaterial = make_shared<lambertian>(color(0.5, 0.5, 0.5));
+    world.add(make_shared<sphere>(point3(0, -1000, 0), groundMaterial));
 
-    int imageWidth = 256;
-    int imageHeight = 256;
-    int ns = 100;
+    for (int a = -11; a < 11; a++){
+        for (int b = -11; b < 11; b++){
+            auto chooseMat = randomFloat();
+            point3 center(a + 0.9 * randomFloat(), 0.2, b + 0.9 * randomFloat());
 
-    
+            if ((center - point3(4, 0.2, 0)).length() > 0.9) {
+                shared_ptr<material> sphereMaterial;
 
-    float R = cos(M_PI / 4);
+                if (chooseMat < 0.8){
+                    auto albedo = color::random() * color::random();
+                    sphereMaterial = make_shared<lambertian>(albedo);
+                    world.add(make_shared<sphere>(center, 0.2, sphereMaterial));
+                }
+                else if (chooseMat < 0.95){
+                    auto albedo = color::random(0.5, 1);
+                    auto fuzz = randomFloat(0, 0.5);
+                    sphereMaterial = make_shared<metal>(albedo, fuzz);
+                    world.add(make_shared<sphere>(center, 0.2, sphereMaterial));
+                }
+                else{
+                    sphereMaterial = make_shared<dielectric>(1.5);
+                    world.add(make_shared<sphere>(center, 0.2, sphereMaterial));
+                }
+            }
+        }
+    }
 
-    hittable *list[4];
-    list[0] = new sphere(vec3(0, 0, -1), 0.5, new lambertian(vec3(0.8, 0.3, 0.3)));
-    list[1] = new sphere(vec3(0, -100.5, -1), 100, new lambertian(vec3(0.8, 0.8, 0.0)));
-    list[2] = new sphere(vec3(1, 0, -1), 0.5, new metal(vec3(0.8, 0.6, 0.2)));
-    list[3] = new sphere(vec3(-1, 0, -1), 0.5, new dielectric(1.5));
+    auto material1 = make_shared<dielectric>(1.5);
+    world.add(make_shared<sphere>(point3(0, 1, 0), 1.0, material1));
 
-    hittable *world = new hittableList(list, 2);
-    
+    auto material2 = make_shared<lambertian>(color(0.4, 0.2, 0.1));
+    world.add(make_shared<sphere>(point3(-4, 1, 0), 1.0, material2));
+
+    auto material3 = make_shared<metal>(color(0.7, 0.6, 0.5), 0.0);
+    world.add(make_shared<sphere>(point3(4, 1, 0), 1.0, material3));
+
     camera cam;
     
     cam.aspectRatio = 16.0 / 9.0;

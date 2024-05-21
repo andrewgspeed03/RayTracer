@@ -45,7 +45,7 @@ class camera {
     private:
         int imageHeight;
         float pixelSamplesScale;
-        pint3 center;
+        point3 center;
         point3 pixel100Loc;
         vec3 pixelDeltaU;
         vec3 pixelDeltaV;

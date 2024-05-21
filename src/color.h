@@ -5,7 +5,7 @@
 #include "interval.h"
 #include "vec3.h"
 
-using color = vec3
+using color = vec3;
 
 inline float linearToGamma(float linearComponent){
     if (linearComponent > 0)
