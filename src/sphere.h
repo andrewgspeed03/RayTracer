@@ -5,8 +5,7 @@
 
 class sphere: public hittable {
     public:
-        sphere() {}
-        sphere(const point3& cen, float r, shared_ptr<material> m) : center(cen), radius(fmax(0, r)), material(m){};
+        sphere(const point3& center, float radius, shared_ptr<material> mat) : center(center), radius(fmax(0, radius)), mat(mat) {}
         
         virtual bool hit(const ray& r, interval rayT, hitRecord& rec) const override{
             vec3 oc = r.origin() - center;

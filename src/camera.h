@@ -8,7 +8,7 @@
 
 class camera {
     public:
-        float aspectRatio = 1.0
+        float aspectRatio = 1.0;
         int imageWidth = 100;
         int samplesPerPixel = 10;
         int maxDepth = 10;
@@ -73,7 +73,7 @@ class camera {
             v = cross(w, u);
 
             //calc the vects across hori and down vert viewport edges
-            vec3 viewportU = viewPortWidth * u;
+            vec3 viewportU = viewportWidth * u;
             vec3 viewportV = viewportHeight * -v;
 
             //calc the hori and vect delta vects from pixel to pixel

@@ -11,7 +11,7 @@ inline float linearToGamma(float linearComponent){
     if (linearComponent > 0)
         return sqrt(linearComponent);
 
-    return 0
+    return 0;
 }
 
 void writeColor(std::ostream& out, const color& pixelColor){

@@ -9,17 +9,17 @@ class material {
     public:
         virtual ~material() = default;
 
-        virtual bool scatter(const ray& rIn, const hitRecord& rec, vec3& attenuation, ray& scattered) const {return false;}
+        virtual bool scatter(const ray& rIn, const hitRecord& rec, color& attenuation, ray& scattered) const {return false;}
 };
 
 class lambertian : public material {
     public:
         lambertian(const color& a) : albedo(a) {}
         
-        virtual bool scatter(const ray& rIn, const hitRecord rec, color& attenuation, ray& scattered) const override{
+        bool scatter(const ray& rIn, const hitRecord& rec, color& attenuation, ray& scattered) const override{
             auto scatterDirection = rec.normal + randomUnitVector();
 
-            if (scatterDirection.near_zero())
+            if (scatterDirection.nearZero())
                 scatterDirection = rec.normal;
 
             scattered = ray(rec.p, scatterDirection);
@@ -52,7 +52,7 @@ class dielectric : public material {
     public:
         dielectric(float refractionIndex) : refractionIndex(refractionIndex) {}
 
-        bool scatter(const ray& rIn, const hitRecord rec, color& attenuation, ray& scattered) const override{
+        bool scatter(const ray& rIn, const hitRecord& rec, color& attenuation, ray& scattered) const override{
             attenuation = color(1.0, 1.0, 1.0);
             float ri = rec.frontFace ? (1.0 / refractionIndex) : refractionIndex;
 
@@ -73,7 +73,7 @@ class dielectric : public material {
         }
     
     private:
-        float refractionIndex
+        float refractionIndex;
 
         static float reflectance(float cosine, float refractionIndex){
             auto r0 = (1 - refractionIndex) / (1 + refractionIndex);

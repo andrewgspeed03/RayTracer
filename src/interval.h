@@ -14,6 +14,10 @@ class interval{
         }
 
         bool contains(float x) const{
+            return min <= x && x <= max;
+        }
+
+        bool surrounds(float x) const{
             return min < x && x < max;
         }
 
@@ -27,6 +31,6 @@ class interval{
 };
 
 const interval interval::empty = interval(+infinity, -infinity);
-const interval interval::universe = interval(-infinity, +infinity):
+const interval interval::universe = interval(-infinity, +infinity);
 
 #endif

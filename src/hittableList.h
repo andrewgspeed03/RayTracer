@@ -11,7 +11,7 @@ class hittableList: public hittable {
         std::vector<shared_ptr<hittable>> objects;
 
         hittableList() {}
-        hittableList(shared_ptr<hittable> object) {add(objects)}
+        hittableList(shared_ptr<hittable> object) {add(object);}
         
         void clear() {objects.clear();}
 
@@ -19,7 +19,7 @@ class hittableList: public hittable {
             objects.push_back(object);
         }
 
-        virtual bool hit(const ray& r, float tMin, float tMax, hitRecord& rec) const override {
+        virtual bool hit(const ray& r, interval rayT, hitRecord& rec) const override {
             hitRecord tempRec;
             bool hitAnything = false;
             double closestSoFar = rayT.max;

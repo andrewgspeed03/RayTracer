@@ -10,7 +10,7 @@
 //STD usings
 using std::fabs;
 using std::make_shared;
-using std::make_shared_ptr;
+using std::shared_ptr;
 using std::sqrt;
 
 //constants
