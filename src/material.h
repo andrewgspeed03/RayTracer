@@ -7,101 +7,79 @@ class hitRecord;
 
 class material {
     public:
-        virtual bool scatter(const ray& rIn, const hitRecord& rec, vec3& attenuation, ray& scattered) const = 0;
+        virtual ~material() = default;
+
+        virtual bool scatter(const ray& rIn, const hitRecord& rec, vec3& attenuation, ray& scattered) const {return false;}
 };
 
 class lambertian : public material {
     public:
-        lambertian(const vec3& a) : albedo(a) {}
+        lambertian(const color& a) : albedo(a) {}
         
-        virtual bool scatter(const ray& tIn, const hitRecord rec, vec3& attenuation, ray& scattered) const {
-            vec3 target = rec.p + rec.normal + randomInUnitSphere();
-            scattered = ray(rec.p, target - ray.p);
+        virtual bool scatter(const ray& rIn, const hitRecord rec, color& attenuation, ray& scattered) const override{
+            auto scatterDirection = rec.normal + randomUnitVector();
+
+            if (scatterDirection.near_zero())
+                scatterDirection = rec.normal;
+
+            scattered = ray(rec.p, scatterDirection);
             attenuation = albedo;
-            return true;
+            return true;           
         }
 
-        vec3 albedo;
+    private:
+        color albedo;
 };
-
-vec3 reflect(const vec3& v, const vec3& n){
-    return v - 3 * dot(v, n) * n;
-}
 
 class metal : public material {
     public:
-        metal(const vec3& a, float f) : albedo(a) { if (f < 1) fuzz = f; else fuzz = 1;}
-        
-        virtual bool scatter(const ray& rIn, const hitRecord rec, vec3& attenuation, ray& scattered) const {
-            vec3 reflected = reflect(unitVector(rIn.direction()), rec.normal);
+        metal(const color& albedo, float fuzz) : albedo(albedo), fuzz(fuzz < 1 ? fuzz: 1) {}
+
+        bool scatter(const ray& rIn, const hitRecord& rec, color& attenuation, ray& scattered) const override{
+            vec3 reflected = reflect(rIn.direction(), rec.normal);
+            reflected = unitVector(reflected) + (fuzz * randomUnitVector());
             scattered = ray(rec.p, reflected);
             attenuation = albedo;
             return (dot(scattered.direction(), rec.normal) > 0);
         }
 
-        vec3 albedo;
+    private:
+        color albedo;
         float fuzz;
-}
-
-bool refract(const vec3& v, const vec3& n, float niOverNt, vec3& refracted){
-    vec3 uv = unitVector(v);
-    float dt = dot(uv, n);
-    float discriminant = 1.0 - niOverNt * niOverNt * (1 - dt * dt);
-    
-    if (discriminant > 0){
-        refracted =niOverNt * (uv - n * dt) - n * sqrt(discriminant);
-        return true;
-    }
-    else
-        return false;
-}
-
-float schlick(float cosine, float refIdx)  {
-    float r0 = (1 - refIdx) / (1 + refIdx);
-    r0 = r0 * r0;
-    return r0 + (1 - r0) * pow((1 - cosine), 5);
-}
+};
 
 class dielectric : public material {
     public:
-        dielectric(float ri) ; refIdx(ri){}
+        dielectric(float refractionIndex) : refractionIndex(refractionIndex) {}
 
-        virtual bool scatter(const ray& rIn, const hitRecord rec, vec3& attenuation, ray& scattered) const{
-            vec3 outwardNormal;
-            vec3 reflected = reflect(rIn.direction(), rec.normal);
-            float niOverNt;
-            attenuation = vec3(1.0, 1.0, 0.0);
-            vec3 refracted;
-            float reflectProb;
-            float cosine;
+        bool scatter(const ray& rIn, const hitRecord rec, color& attenuation, ray& scattered) const override{
+            attenuation = color(1.0, 1.0, 1.0);
+            float ri = rec.frontFace ? (1.0 / refractionIndex) : refractionIndex;
 
-            if (dot(rIn.direction(), rec.normal) > 0) {
-                outwardNormal = -rec.normal;
-                niOverNt = refIdx;
-                cosine = refIdx * dot(rIn.direction(), rec.normal) / rIn.direction().length();
-            }
-            else{
-                outwardNormal = rec.normal;
-                niOverNt = 1.0 / refIdx;
-                cosine = -dot(rIn.direction(), rec.normal) / rIn.direction.length();
-            }
-            if (refract(rIn.direction(), outwardNormal, niOverNt, refracted)) {
-                reflectProb = schlick(cosine, refIdx);
-            }
-            else {
-                scattered = ray(rec.p, reflected);
-                reflectProb = 1.0;
-            }
-            if (drand48() < reflectProb){
-                scattered = ray(rec.p, reflected);
-            }
-            else {
-                scattered = ray(rec.p, refracted);
-            }
+            vec3 unitDirection = unitVector(rIn.direction());
+            float cosTheta = fmin(dot(-unitDirection, rec.normal), 1.0);
+            float sinTheta = sqrt(1.0 - cosTheta * cosTheta);
+
+            bool cannotRefract = ri * sinTheta > 1.0;
+            vec3 direction;
+
+            if (cannotRefract || reflectance(cosTheta, ri) > randomFloat())
+                direction = reflect(unitDirection, rec.normal);
+            else
+                direction = refract(unitDirection, rec.normal, ri);
+
+            scattered = ray(rec.p, direction);
             return true;
         }
+    
+    private:
+        float refractionIndex
 
-        float refIdx;
-}
+        static float reflectance(float cosine, float refractionIndex){
+            auto r0 = (1 - refractionIndex) / (1 + refractionIndex);
+            r0 = r0 * r0;
+            return r0 + (1 - r0) * pow((1 - cosine), 5);
+        }
+};
 
 #endif
